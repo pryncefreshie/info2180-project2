@@ -52,6 +52,35 @@ function check_for_win(winning_state, pieces) {
     return false;
 }
 
+//switches piece with blank space
+function move_piece(piece, animate) {
+    blank_top = piece.style.top;
+    blank_left = piece.style.left;
+
+    if (animate) {
+        var winning_state = arguments[2];
+        var pieces = arguments[3];
+        $(piece).animate({ "top": blank[0], "left": blank[1] }, "slow", "linear", function() {
+            if (check_for_win(winning_state, pieces)) {
+                if (best_time < total_time) {
+                    best_time = total_time;
+                }
+                if (best_moves < moves) {
+                    best_moves = moves
+                }
+                var win_string = `You Win\nTotal Time: ${seconds_to_time(total_time)} Number of moves: ${moves}\nBest Time: ${seconds_to_time(best_time)} Best Number of Moves: ${best_moves}`;
+                $(".explanation")[0].innerText = win_string;
+                $(".explanation")[0].style.textAlign = "Center";
+            }
+        });
+
+    } else {
+        piece.style.top = blank[0];
+        piece.style.left = blank[1];
+    }
+    blank = [blank_top, blank_left];
+}
+
 //Shuffle the maze board
 function random_shuffle(pieces) {
     var pieceLength = pieces.length;
