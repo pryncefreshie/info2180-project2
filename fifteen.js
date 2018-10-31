@@ -37,3 +37,51 @@ function start_state() {
 function is_movable(piece) {
     return parseInt(piece.style.top) + 100 === parseInt(blank[0]) & parseInt(piece.style.left) === parseInt(blank[1]) | parseInt(piece.style.top) - 100 === parseInt(blank[0]) & parseInt(piece.style.left) === parseInt(blank[1]) | parseInt(piece.style.top) === parseInt(blank[0]) & parseInt(piece.style.left) - 100 === parseInt(blank[1]) | parseInt(piece.style.top) === parseInt(blank[0]) & parseInt(piece.style.left) + 100 === parseInt(blank[1])
 }
+
+//Checks if the current state of the maze board is the winning state
+function check_for_win(winning_state, pieces) {
+    if (start) {
+        for (var i = 0; i < pieces.length; i++) {
+            if ((winning_state[i][0] !== pieces[i].style.top) | (winning_state[i][1] !== pieces[i].style.left)) {
+                return false;
+            }
+        }
+        clearInterval(timer);
+        return true;
+    }
+    return false;
+}
+
+//Shuffle the maze board
+function random_shuffle(pieces) {
+    var pieceLength = pieces.length;
+    var piece;
+    var rand;
+
+    for (var index = 0; index < pieceLength; index++) {
+        rand = Math.floor(Math.random() * pieces.length);
+        piece = pieces.splice(rand, 1);
+        move_piece(piece[0], false);
+    }
+}
+
+//Returns all maze pieces
+function get_pieces() {
+    return $(".puzzlepiece");
+}
+
+function change_bg(value) {
+    var pieces = get_pieces();
+    
+    for (var i = 0; i < pieces.length; i++){
+        pieces[i].style.backgroundImage = `url('background${value}.jpg')`;
+    }
+}
+
+function shuffle_image(){
+    var value = Math.floor(Math.random()*4)
+    if(value === 0){
+        value = "";
+    }
+    change_bg(value);
+}
