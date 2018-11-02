@@ -1,9 +1,21 @@
 
+/*Additional features:
+- End-of-game notification
+- Multiple backgrounds (Grade)
+*/
 window.onload = main;
 
 function main() {
     var winning_state = start_state();
     var puzzle_pieces = get_pieces();
+    add_background_seletor();
+    var bg_form_items = $("form")[0].elements;
+
+    for (var i = 0; i < bg_form_items.length; i++) {
+        bg_form_items[i].addEventListener("click", function(){
+            change_bg(this.value)
+        });
+    }
 
     document.getElementById("shufflebutton").onclick = function() {
         random_shuffle(puzzle_pieces);
@@ -130,6 +142,19 @@ function random_shuffle(pieces) {
 //Returns all maze pieces
 function get_pieces() {
     return $(".puzzlepiece");
+}
+
+function add_background_seletor() {
+    var background_form = "<form align='Center'>\
+    <p align='Center'>Select a background image<p>\
+    <input type = 'radio' name = 'bg' value = ''/> Game of Thrones\
+    <input type = 'radio' name = 'bg' value = '1'/>Lannister\
+    <input type = 'radio' name = 'bg' value = '2'/>Stark\
+    <input type = 'radio' name = 'bg' value = '3'/>Targaryen\
+    </form>";
+
+    $("#overall").before(background_form);
+
 }
 
 function change_bg(value) {
