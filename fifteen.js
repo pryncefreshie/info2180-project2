@@ -2,6 +2,7 @@
 /*Additional features:
 - End-of-game notification
 - Multiple backgrounds (Grade)
+- Game time
 */
 window.onload = main;
 
@@ -9,47 +10,11 @@ window.onload = main;
 var blank = ["300px", "300px"]; //coordinates for blank position
 var start = false; //indicates game start
 var moves = 0; //holds the number of moves made
-
-function main() {
-    var winning_state = start_state();
-    var puzzle_pieces = get_pieces();
-    add_background_seletor();
-    var bg_form_items = $("form")[0].elements;
-
-    for (var i = 0; i < bg_form_items.length; i++) {
-        bg_form_items[i].addEventListener("click", function(){
-            change_bg(this.value)
-        });
-    }
-
-    document.getElementById("shufflebutton").onclick = function() {
-        random_shuffle(puzzle_pieces);
-        shuffle_image();
-        start = true;
-        moves = 0;
-        puzzle_pieces = get_pieces();
-    }
-
-    for (var i = 0; i < puzzle_pieces.length; i++) {
-        puzzle_pieces[i].addEventListener("mouseover", function() {
-            if (is_movable(this)) {
-                this.className = "puzzlepiece movablepiece";
-            }
-        });
-
-        puzzle_pieces[i].addEventListener("mouseleave", function() {
-            this.className = "puzzlepiece";
-        });
-
-        puzzle_pieces[i].addEventListener("click", function() {
-            if (this.className.includes("movablepiece")) {
-                move_piece(this, true, winning_state, puzzle_pieces);
-                moves++;
-            }
-        });
-    }
-
-}
+var start_time = 0; //Game start time
+var timer; // variable for timer 
+var total_time = 0; // total gameplay time
+var best_time = 0;
+var best_moves = 0;
 
 //Maze piece Initialization function and returns initial maze state
 function start_state() {
@@ -149,6 +114,26 @@ function get_pieces() {
     return $(".puzzlepiece");
 }
 
+//returns HH:MM:SS time format from seconds
+function seconds_to_time(seconds) {
+    var date = new Date(null);
+    date.setSeconds(seconds);
+    return date.toISOString().substr(11, 8);
+}
+
+//returns current time since the start of the game
+function update_time() {
+    var current_date = new Date();
+    var current_time = (current_date.getHours() * 60 * 60) + (current_date.getMinutes() * 60) + current_date.getSeconds();
+    total_time = current_time - start_time;
+    return seconds_to_time(total_time);
+}
+
+//Adds game time and moves made to DOM
+function update_stats() {
+    $(".explanation")[0].innerHTML = `Time: ${update_time()} Moves: ${moves}`;
+}
+
 function add_background_seletor() {
     var background_form = "<form align='Center'>\
     <p align='Center'>Select a background image<p>\
@@ -176,4 +161,48 @@ function shuffle_image(){
         value = "";
     }
     change_bg(value);
+}
+
+function main() {
+    var winning_state = start_state();
+    var puzzle_pieces = get_pieces();
+    add_background_seletor();
+    var bg_form_items = $("form")[0].elements;
+
+    for (var i = 0; i < bg_form_items.length; i++) {
+        bg_form_items[i].addEventListener("click", function(){
+            change_bg(this.value)
+        });
+    }
+
+    document.getElementById("shufflebutton").onclick = function() {
+        random_shuffle(puzzle_pieces);
+        shuffle_image();
+        start = true;
+        moves = 0;
+        puzzle_pieces = get_pieces();
+        var start_date = new Date();
+        start_time = (start_date.getHours() * 60 * 60) + (start_date.getMinutes() * 60) + start_date.getSeconds();
+        timer = setInterval(update_stats, 1000);
+    }
+
+    for (var i = 0; i < puzzle_pieces.length; i++) {
+        puzzle_pieces[i].addEventListener("mouseover", function() {
+            if (is_movable(this)) {
+                this.className = "puzzlepiece movablepiece";
+            }
+        });
+
+        puzzle_pieces[i].addEventListener("mouseleave", function() {
+            this.className = "puzzlepiece";
+        });
+
+        puzzle_pieces[i].addEventListener("click", function() {
+            if (this.className.includes("movablepiece")) {
+                move_piece(this, true, winning_state, puzzle_pieces);
+                moves++;
+            }
+        });
+    }
+
 }
