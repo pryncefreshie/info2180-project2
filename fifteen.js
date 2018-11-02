@@ -5,6 +5,11 @@
 */
 window.onload = main;
 
+//Global Vaiable declarations
+var blank = ["300px", "300px"]; //coordinates for blank position
+var start = false; //indicates game start
+var moves = 0; //holds the number of moves made
+
 function main() {
     var winning_state = start_state();
     var puzzle_pieces = get_pieces();
