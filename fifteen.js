@@ -1,6 +1,39 @@
 
 window.onload = main;
 
+function main() {
+    var winning_state = start_state();
+    var puzzle_pieces = get_pieces();
+
+    document.getElementById("shufflebutton").onclick = function() {
+        random_shuffle(puzzle_pieces);
+        shuffle_image();
+        start = true;
+        moves = 0;
+        puzzle_pieces = get_pieces();
+    }
+
+    for (var i = 0; i < puzzle_pieces.length; i++) {
+        puzzle_pieces[i].addEventListener("mouseover", function() {
+            if (is_movable(this)) {
+                this.className = "puzzlepiece movablepiece";
+            }
+        });
+
+        puzzle_pieces[i].addEventListener("mouseleave", function() {
+            this.className = "puzzlepiece";
+        });
+
+        puzzle_pieces[i].addEventListener("click", function() {
+            if (this.className.includes("movablepiece")) {
+                move_piece(this, true, winning_state, puzzle_pieces);
+                moves++;
+            }
+        });
+    }
+
+}
+
 //Maze piece Initialization function and returns initial maze state
 function start_state() {
     var puzzle_area = document.getElementById("puzzlearea").childNodes;
